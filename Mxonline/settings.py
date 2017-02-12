@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'organization',
     'operation',
     'xadmin',
-    'crispy_forms'
+    'crispy_forms',
+    'captcha'
 
 ]
 AUTH_USER_MODEL = "users.UserProfile"
@@ -142,3 +143,17 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
+# EMAIL_HOST = 'smtp.qq.com'
+# EMAIL_PORT = 465
+# EMAIL_HOST_USER = '451992856@qq.com'
+# EMAIL_HOST_PASSWORD = 'kjmihngtgfpxcbdj'
+# EMAIL_USE_TLS = True
+# EMAIL_FROM = '451992856@qq.com'
+
+
+EMAIL_HOST = "smtp.sina.com"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "cc19930924@sina.com"
+EMAIL_HOST_PASSWORD = 'cc19930924.'
+EMAIL_USE_TLS = False
+EMAIL_FROM = 'cc19930924@sina.com'
