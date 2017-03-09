@@ -3,29 +3,50 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db import models
+from organization.models import CourseOrg, Teacher
 
 
 # Create your models here.
 
 
 class Course(models.Model):
+    # 外键允许为空,避免与旧数据产生冲突
+    coures_org = models.ForeignKey(CourseOrg, verbose_name=u"课程机构", null=True)
     name = models.CharField(max_length=50, verbose_name=u"课程名称")
     desc = models.CharField(max_length=300, verbose_name=u"课程描述")
     detail = models.TextField(verbose_name=u"课程详情")
-    degree = models.CharField(choices=(("cj", "初级"), ("zj", "中级"), ("gj", "高级")), max_length=2,
+    degree = models.CharField(choices=(("cj", "初级"), ("zj", "中级"), ("gj", "高级"), ("dy", "噩梦")), max_length=2,
                               verbose_name=u'难度')
+    teacher = models.ForeignKey(Teacher, verbose_name=u"讲师", null=True, blank=True)
     learn_times = models.IntegerField(default=0, verbose_name=u"学习时长(分钟数)")
     student = models.IntegerField(default=0, verbose_name=u"学习人数")
     fav_nums = models.IntegerField(default=0, verbose_name=u"收藏人数")
     image = models.ImageField(upload_to="courses/%Y/%m", verbose_name=u"封面图", max_length=100)
     click_num = models.IntegerField(default=0, verbose_name=u"点击数")
+    category = models.CharField(default="后端开发", max_length=20, verbose_name=u"课程类别")
+    tag = models.CharField(default="", verbose_name=u"课程标签", max_length=10)
+    notice = models.TextField(max_length=200, verbose_name=u"课程须知", default="")
+    learning_skills = models.TextField(max_length=200, verbose_name=u"技能获取", default="")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
 
     class Meta:
         verbose_name = u"课程"
         verbose_name_plural = verbose_name
 
-    # 重载__unicode__方法  在章节中显示课程名称
+    # 获取章节数
+    # 有外键的models 使用 models_set 方法反向获取
+    def get_zj_num(self):
+        return self.lesson_set.all().count()
+
+    # 获取课程学习用户
+    def get_learn_users(self):
+        return self.usercourse_set.all()[:5]
+
+    # 获取所有课程章节
+    def get_lesson(self):
+        return self.lesson_set.all()
+
+    # 重载__unicode__方法  在xadmin章节中显示课程名称
 
     def __unicode__(self):
         return self.name
@@ -40,10 +61,19 @@ class Lesson(models.Model):
         verbose_name = u"章节"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return self.name
+
+    # 获取章节视频
+    def get_lesson_video(self):
+        return self.video_set.all()
+
 
 class Video(models.Model):
     lesson = models.ForeignKey(Lesson, verbose_name=u"章节")
     name = models.CharField(max_length=100, verbose_name=u"视频名")
+    url = models.CharField(max_length=200, verbose_name=u"访问地址", default="")
+    learn_times = models.IntegerField(default=0, verbose_name=u"学习时长(分钟数)")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
 
     class Meta:
@@ -60,3 +90,6 @@ class CourseResource(models.Model):
     class Meta:
         verbose_name = u"课程资源"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.name

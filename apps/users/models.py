@@ -22,8 +22,7 @@ class UserProfile(AbstractUser):
         verbose_name = "用户信息"
         verbose_name_plural = verbose_name
 
-    def __unicode__(self):
-        return self.username
+
 
 
 # 邮箱验证码

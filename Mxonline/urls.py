@@ -18,7 +18,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView
+from django.views.static import serve
+
 import xadmin
+from Mxonline.settings import MEDIA_ROOT
 from organization.views import OrgView
 
 from users.views import LoginView, ActiveUserView, ResetView, ModifyPwdView
@@ -35,6 +38,11 @@ urlpatterns = [
     url('^forget/$', ForgetPwdView.as_view(), name='forget'),
     url(r'^reset/(?P<active_code>.*)/$', ResetView.as_view(), name="reset_pwd"),
     url('^modify_pwd/$', ModifyPwdView.as_view(), name='modify_pwd'),
-    # 课程机构首页
-    url(r'org_list/$', OrgView.as_view(), name="org_list"),
+    # 课程机构url
+    url(r'^org/', include("organization.urls", namespace="org")),
+    # 课程列表页
+    url(r'^course/', include("courses.urls", namespace="course")),
+    # 上传文件访问处理
+    url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT})
+
 ]

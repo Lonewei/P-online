@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-AUTHENTICATION_BACKENDS =(
+AUTHENTICATION_BACKENDS = (
     'users.views.CustomBackend',
 )
 
@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'operation',
     'xadmin',
     'crispy_forms',
-    'captcha'
+    'captcha',
+    'pure_pagination',
 
 ]
 AUTH_USER_MODEL = "users.UserProfile"
@@ -78,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.core.context_processors.media'
             ],
         },
     },
@@ -157,3 +159,6 @@ EMAIL_HOST_USER = "cc19930924@sina.com"
 EMAIL_HOST_PASSWORD = 'cc19930924.'
 EMAIL_USE_TLS = False
 EMAIL_FROM = 'cc19930924@sina.com'
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -24,16 +24,24 @@ class CityDict(models.Model):
 class CourseOrg(models.Model):
     name = models.CharField(max_length=50, verbose_name=u"机构名称")
     desc = models.TextField(verbose_name=u"机构描述")
+    category = models.CharField(default="pxjg", max_length=20, choices=(("pxjg", "培训机构"), ("gr", "个人"), ("gx", "高校")),
+                                verbose_name=u"机构类别")
     click_num = models.IntegerField(default=0, verbose_name=u"点击数")
     fav_num = models.IntegerField(default=0, verbose_name=u"收藏数")
     image = models.ImageField(upload_to="org/%Y/%m", verbose_name=u"封面图")
     address = models.CharField(max_length=150, verbose_name=u"机构地址")
     city = models.ForeignKey(CityDict, verbose_name=u"所在城市")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
+    study_num = models.IntegerField(default=0, verbose_name=u"学习人数")
+    course_num = models.IntegerField(default=0, verbose_name=u"课程数")
 
     class Meta:
         verbose_name = u"课程机构"
         verbose_name_plural = verbose_name
+
+    # 获取教师人数
+    def get_teacher_num(self):
+        return self.teacher_set.all().count()
 
     def __unicode__(self):
         return self.name
@@ -41,15 +49,19 @@ class CourseOrg(models.Model):
 
 class Teacher(models.Model):
     org = models.ForeignKey(CourseOrg, verbose_name=u"机构名称")
-    name = models.CharField(max_length=50, verbose_name=u"教室名")
+    name = models.CharField(max_length=50, verbose_name=u"教师名")
     work_year = models.IntegerField(default=0, verbose_name=u"工作年限")
     work_company = models.CharField(max_length=50, verbose_name=u"就职公司")
     work_position = models.CharField(max_length=50, verbose_name=u"公司职位")
     points = models.CharField(max_length=50, verbose_name=u"教学特点")
     click_num = models.IntegerField(default=0, verbose_name=u"点击数")
     fav_num = models.IntegerField(default=0, verbose_name=u"收藏数")
+    image = models.ImageField(default=None, upload_to="teacher/%Y/%m", verbose_name=u"讲师头像")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
 
     class Meta:
         verbose_name = u"教师"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.name
