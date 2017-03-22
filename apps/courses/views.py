@@ -2,11 +2,13 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic.base import View
+from django.db.models import Q
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from operation.models import UserFavorite, CourseComments, UserCourse
 from .models import Course, CourseResource, Video
 from utils.mixin_utils import LoginRequiredMixin
+
 
 # Create your views here.
 
@@ -15,11 +17,18 @@ class CourseListView(View):
     """
     课程列表
     """
+
     def get(self, request):
         # -add_time 为降序排序
         all_courses = Course.objects.all().order_by("-add_time")
-
         hot_courses = Course.objects.all().order_by("-click_num")[:3]
+
+        # 课程搜索
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            # icontains 忽略大小写
+            all_courses = all_courses.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords))
+
         # 课程排序
         sort = request.GET.get('sort', "")
         if sort:
@@ -49,6 +58,7 @@ class CourseDetailView(View):
     """
     课程详情页
     """
+
     def get(self, request, course_id):
         courses = Course.objects.get(id=int(course_id))
 
@@ -84,8 +94,14 @@ class CourseInfoView(LoginRequiredMixin, View):
     """
     课程章节信息
     """
+
     def get(self, request, course_id):
         course = Course.objects.get(id=int(course_id))
+
+        # 课程点击数
+        course.student += 1
+        course.save()
+
         # 查询用户是否已关联课程
         user_course = UserCourse.objects.filter(user=request.user, course=course)
         if not user_course:
@@ -115,14 +131,18 @@ class CommentView(LoginRequiredMixin, View):
     """
     课程评论
     """
+
     def get(self, request, course_id):
         course = Course.objects.get(id=int(course_id))
         all_resources = CourseResource.objects.filter(course=course)
         all_comments = CourseComments.objects.all()
+        # 获取用户学过的所有课程
+        relate_courses = Course.objects.filter(id__in=course_id).order_by('-click_num')[:5]
         return render(request, "course-comment.html", {
             "course": course,
             "all_resources": all_resources,
             "all_comments": all_comments,
+            "relate_courses": relate_courses
         })
 
 
@@ -130,6 +150,7 @@ class AddCommentView(View):
     """
     用户评论
     """
+
     def post(self, request):
         if not request.user.is_authenticated():
             return HttpResponse('{"status":"fail", "msg":"用户未登录"}', content_type='application/json')

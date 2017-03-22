@@ -27,6 +27,7 @@ SECRET_KEY = '+bn@g3*t!x(^@g)s)iass_4x77dp+)q=e4lp6f=s(k!v_i_1&z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'captcha',
     'pure_pagination',
+    'DjangoUeditor',
 
 ]
 AUTH_USER_MODEL = "users.UserProfile"
@@ -79,7 +81,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.media'
+                'django.template.context_processors.media'
             ],
         },
     },
@@ -162,3 +164,5 @@ EMAIL_FROM = 'cc19930924@sina.com'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')

@@ -22,7 +22,14 @@ class UserProfile(AbstractUser):
         verbose_name = "用户信息"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return self.username
 
+    def unread_nums(self):
+        # 获取用户未读消息数量
+        # 此处from 防止循环import
+        from operation.models import UserMessage
+        return UserMessage.objects.filter(user=self.id, has_read=False).count()
 
 
 # 邮箱验证码
@@ -30,7 +37,8 @@ class UserProfile(AbstractUser):
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=50, verbose_name=u"验证码")
     email = models.EmailField(max_length=50, verbose_name=u"邮箱")
-    send_type = models.CharField(max_length=20, choices=(("register", u"注册"), ("forget", u"找回密码")),
+    send_type = models.CharField(max_length=20, choices=(("register", u"注册"), ("forget", u"找回密码"),
+                                                         ("update_email", u"修改邮箱")),
                                  verbose_name=u"验证码类型")
     send_time = models.DateTimeField(default=datetime.now, verbose_name=u"发送时间")
 
@@ -53,3 +61,6 @@ class Banner(models.Model):
     class Meta:
         verbose_name = u"轮播图"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return self.title

@@ -17,6 +17,9 @@ class CourseOrgAdmin(object):
     list_display = ['name', 'desc', 'click_num', 'fav_num']
     search_fields = ['name', 'desc', 'click_num', 'fav_num']
     list_filter = ['name', 'desc', 'click_num', 'fav_num']
+    # 更改为ajax 只有进行课程机构搜索时才会加载数据
+    # 避免对数据库大量请求
+    relfield_style = 'fk-ajax'
 
 
 class TeacherAdmin(object):

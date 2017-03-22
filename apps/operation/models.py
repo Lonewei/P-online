@@ -58,6 +58,8 @@ class UserMessage(models.Model):
     class Meta:
         verbose_name = u"用户消息"
         verbose_name_plural = verbose_name
+    def __unicode__(self):
+        return self.message
 
 
 class UserCourse(models.Model):

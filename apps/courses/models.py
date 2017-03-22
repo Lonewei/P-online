@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 from datetime import datetime
 
+from DjangoUeditor.models import UEditorField
+
 from django.db import models
 from organization.models import CourseOrg, Teacher
 
@@ -14,7 +16,10 @@ class Course(models.Model):
     coures_org = models.ForeignKey(CourseOrg, verbose_name=u"课程机构", null=True)
     name = models.CharField(max_length=50, verbose_name=u"课程名称")
     desc = models.CharField(max_length=300, verbose_name=u"课程描述")
-    detail = models.TextField(verbose_name=u"课程详情")
+    detail = UEditorField(verbose_name=u"课程详情", width=600, height=300, imagePath="courses/ueditor/",
+                          filePath="courses/ueditor/",
+                          default="")
+    is_banner = models.BooleanField(default=False, verbose_name=u"是否轮播")
     degree = models.CharField(choices=(("cj", "初级"), ("zj", "中级"), ("gj", "高级"), ("dy", "噩梦")), max_length=2,
                               verbose_name=u'难度')
     teacher = models.ForeignKey(Teacher, verbose_name=u"讲师", null=True, blank=True)
@@ -38,6 +43,15 @@ class Course(models.Model):
     def get_zj_num(self):
         return self.lesson_set.all().count()
 
+    get_zj_num.short_description = '章节数'
+
+    def go_to(self):
+        # 将内容以文本方式显示
+        from django.utils.safestring import mark_safe
+        return mark_safe("<a href='http://onewei.cc'>跳转</>")
+
+    go_to.short_description = '跳转'
+
     # 获取课程学习用户
     def get_learn_users(self):
         return self.usercourse_set.all()[:5]
@@ -50,6 +64,15 @@ class Course(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class BannerCourse(Course):
+    class Meta:
+        verbose_name = '轮播课程'
+        verbose_name_plural = verbose_name
+        # 设置proxy 防止在数据库中生成表
+        # BannerCourse用来xadmin中使用
+        proxy = True
 
 
 class Lesson(models.Model):

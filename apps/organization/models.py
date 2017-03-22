@@ -11,7 +11,7 @@ from django.db import models
 class CityDict(models.Model):
     name = models.CharField(max_length=20, verbose_name=u"城市名")
     desc = models.CharField(max_length=200, verbose_name=u"描述")
-    add_time = models.DateTimeField(default=datetime.now)
+    add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
 
     class Meta:
         verbose_name = u"城市"
@@ -26,6 +26,7 @@ class CourseOrg(models.Model):
     desc = models.TextField(verbose_name=u"机构描述")
     category = models.CharField(default="pxjg", max_length=20, choices=(("pxjg", "培训机构"), ("gr", "个人"), ("gx", "高校")),
                                 verbose_name=u"机构类别")
+    tag = models.CharField(default="全国知名", max_length=10, verbose_name=u"机构标签")
     click_num = models.IntegerField(default=0, verbose_name=u"点击数")
     fav_num = models.IntegerField(default=0, verbose_name=u"收藏数")
     image = models.ImageField(upload_to="org/%Y/%m", verbose_name=u"封面图")
@@ -42,6 +43,10 @@ class CourseOrg(models.Model):
     # 获取教师人数
     def get_teacher_num(self):
         return self.teacher_set.all().count()
+
+    # 获取课程数量
+    def get_course_num(self):
+        return self.course_set.all().count()
 
     def __unicode__(self):
         return self.name
@@ -65,3 +70,6 @@ class Teacher(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_course_num(self):
+        return self.course_set.all().count()

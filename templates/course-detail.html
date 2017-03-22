@@ -29,7 +29,7 @@
 
 					</div>
 					<div class="des">
-						<h1 title="django 从入门到精通体验开始了">{{ courses.name }}</h1>
+						<h1 title="{{ courses.name }}">{{ courses.name }}</h1>
 						<span class="key">{{ courses.desc }}</span>
 						<div class="prize">
 							<span class="fl">难度：<i class="key">{{ courses.get_degree_display }}</i></span>
@@ -77,12 +77,12 @@
 						<p>世界名校，课程权威</p>
 					</div>
 					<div class="pic">
-                        <a href="/company/14/">
+                        <a href="{% url 'org:org_home' courses.coures_org.id %}">
                             <img width="150" height="80" src="{{ MEDIA_URL }}{{ courses.coures_org.image }}"/>
                         </a>
                     </div>
-					<a href="/company/14/">
-                        <h2 class="center" title="清华大学">北京大学</h2>
+					<a href="{% url 'org:org_home' courses.coures_org.id %}">
+                        <h2 class="center" title="{{ courses.coures_org.name }}">{{ courses.coures_org.name }}</h2>
                     </a>
 					<div class="btn  notlogin
 					     "data-favid="14" id="jsRightBtn">
@@ -120,7 +120,10 @@
 					</ul>
 				</div>
 				<div class="tab_cont tab_cont1">
+                <!-- 关闭django templates 自动转义 -->
+                    {% autoescape off %}
                     {{ courses.detail }}
+                    {% endautoescape %}
 				</div>
 				<div class="tab_cont tab_cont2" >
 					<div class="comment">

@@ -1,4 +1,6 @@
 # _*_ coding: utf-8 _*_
+from users.models import UserProfile
+
 __author__ = 'onewei'
 __date__ = '2017/2/6 23:31'
 
@@ -26,3 +28,15 @@ class ForgetForm(forms.Form):
 class ModifyPwdForm(forms.Form):
     password1 = forms.CharField(required=True, min_length=6)
     password2 = forms.CharField(required=True, min_length=6)
+
+
+class UploadImageForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['image']
+
+
+class UserInfoForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['nick_name', 'birday', 'gender', 'address', 'mobile']
